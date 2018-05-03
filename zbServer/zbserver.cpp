@@ -99,6 +99,7 @@ int rcv(sharedData* pData){
 
         //ignore message if checksum wrong
         if(verifyData(buffer) == -1){
+            std::cout << "error on data" << std::endl;
             freeBuffer(buffer);
             continue;
         }
@@ -124,32 +125,40 @@ int rcv(sharedData* pData){
             case RECV_MSG:
                 std::cout << "data received." << std::endl;
                 //PERSONAL PROTOCOL PART
+                offset = 0;
                 dataNb = buffer->ptr[12];
                 for(unsigned int i=0; i<dataNb; i++){
                     type = buffer->ptr[13 + offset];
+                    id = buffer->ptr[14 + offset];
                     switch(type){
                         case ACCEL_X:
                             //DATA TYPE 0 TO COMPLETE
+                            value = buffer->ptr[15 + offset];
                             offset += SIZE_OF_ACCEL;
                             break;
                         case ACCEL_Y:
                             //DATA TYPE 1 TO COMPLETE
+                            value = buffer->ptr[15 + offset];
                             offset += SIZE_OF_ACCEL;
                             break;
                         case ACCEL_Z:
                             //DATA TYPE 2 TO COMPLETE
+                            value = buffer->ptr[15 + offset];
                             offset += SIZE_OF_ACCEL;
                             break;
                         case LUM:
                             //DATA TYPE 3 TO COMPLETE
+                            value = buffer->ptr[15 + offset];
                             offset += SIZE_OF_LUM;
                             break;
                         case TEMP:
                             //DATA TYPE 3 TO COMPLETE
+                            value = buffer->ptr[15 + offset];
                             offset += SIZE_OF_TEMP;
                             break;
                         case DIGIT:
                             //DATA TYPE 3 TO COMPLETE
+                            value = buffer->ptr[15 + offset];
                             offset += SIZE_OF_DIGIT;
                             break;
                     }
@@ -191,7 +200,7 @@ int snd(sharedData* pData){
             sendData(pData->fd, pData->currentMacAddr, netAddr, buffer);
             pData->cv.wait(lock);
         }
-        sleep(5);
+        sleep(2);
     }
     return 0;
 }

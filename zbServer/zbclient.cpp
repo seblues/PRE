@@ -66,6 +66,7 @@ int main(){
     char path[] = "/dev/ttyUSB1";
     shData.fd = initSerial(path);
 
+    std::cout << "start rcv thread" << std::endl;
     std::thread th_rcv(rcv, &shData);
 
     shData.run = true;
@@ -94,6 +95,7 @@ int rcv(sharedData* pData){
 
         //ignore message if checksum wrong
         if(verifyData(buffer) == -1){
+            std::cout << "error in msg" << std::endl;
             freeBuffer(buffer);
             continue;
         }
@@ -114,22 +116,23 @@ int rcv(sharedData* pData){
                 break;
 
             case RECV_MSG:
+                std::cout << "msg received" << std::endl;
                 Buffer* sendingBuffer = newBuffer(10);
 
                 //number of values to send
-                sendingBuffer->ptr[0] = dataNb;
+                sendingBuffer->ptr[0] = 3;
 
                 sendingBuffer->ptr[1] = 0; //type
                 sendingBuffer->ptr[2] = 0; //id
-                sendingBuffer->ptr[3] = 0; //data
+                sendingBuffer->ptr[3] = 1; //data
 
                 sendingBuffer->ptr[4] = 1;
                 sendingBuffer->ptr[5] = 0;
-                sendingBuffer->ptr[6] = 0;
+                sendingBuffer->ptr[6] = 2;
 
                 sendingBuffer->ptr[7] = 2;
                 sendingBuffer->ptr[8] = 0;
-                sendingBuffer->ptr[9] = 0;
+                sendingBuffer->ptr[9] = 3;
 
                 sendData(pData->fd, (char*)macAddr, netAddr, sendingBuffer);
                 break;

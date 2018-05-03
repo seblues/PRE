@@ -17,7 +17,7 @@ int initDb(sqlite3* db){
     int rc = sqlite3_exec(db, sql.c_str(), 0, 0, 0);
 
     sql =   "CREATE TABLE IF NOT EXISTS val("\
-            "sta CHAR(16) PRIMARY KEY NOT NULL, "\
+            "sta CHAR(16), "\
             "type INT(1), "\
             "id INT(2), "
             "value FLOAT(6,4), "
@@ -122,9 +122,9 @@ int insertValue(sqlite3* db, unsigned int type, char* macAddr, unsigned int id, 
     unsigned char macAddrStr[17];
     buffToStr(macAddrStr,(unsigned char*)macAddr,8);
 
-    std::string sqlRequest =    "INSERT INTO val VALUES(" +
-                                std::to_string(type) + ", '" +
+    std::string sqlRequest =    "INSERT INTO val VALUES('" +
                                 std::string((char*)macAddrStr) + "', " +
+                                std::to_string(type) + ", " +
                                 std::to_string(id) + ", " +
                                 std::to_string(value) + ", " +
                                 std::to_string(timestamp) + ");";

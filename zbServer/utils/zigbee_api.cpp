@@ -35,9 +35,10 @@ int sendData(int fd, const char* macAddr, const char* netAddr, const Buffer* dat
     buffer->ptr[13] = netAddr[0];
     buffer->ptr[14] = netAddr[1];
     buffer->ptr[15] = 0x00;
+    buffer->ptr[16] = 0x00;
 	//data copy
     for(i=0; i<dataBuffer->size; i++){
-        buffer->ptr[16+i] = dataBuffer->ptr[i];
+        buffer->ptr[17+i] = dataBuffer->ptr[i];
 	}
 	//checksum
     buffer->ptr[17 + dataBuffer->size] = 0xFF;
