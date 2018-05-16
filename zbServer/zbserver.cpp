@@ -37,6 +37,8 @@
 #define ADDR_N_FOUND 0x24
 #define PAYLOAD_TOO_LARGE 0x74
 
+int waitVal = 1;
+
 struct sharedData{
     bool run;
     int fd;
@@ -73,10 +75,13 @@ int main(){
     std::thread th_snd(snd, &shData);
 
     shData.run = true;
-    //std::cin >> rc;
-    th_rcv.join();
-
+    while(true){
+        std::cin >> waitVal;
+        std::cout << "command received" << std::endl;
+        if(waitVal == 0){break;}
+    }
     shData.run = false;
+    th_rcv.join();
     zigbee_close(shData.fd);
 
 }
@@ -200,7 +205,7 @@ int snd(sharedData* pData){
             sendData(pData->fd, pData->currentMacAddr, netAddr, buffer);
             pData->cv.wait(lock);
         }
-        sleep(2);
+        sleep(waitVal);
     }
     return 0;
 }

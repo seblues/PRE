@@ -1,0 +1,28 @@
+.center {
+    text-align: center;
+}
+
+body { padding-top: 20px; }
+
+#myChart{
+    height: 100%;
+    width: 100%;
+}
+
+#chartContainer{
+    position: relative;
+    float: right;
+    width: 75%;
+    height: 100%;
+}
+
+#options{
+    position: relative;
+    float: left;
+    width: 25%;
+    height: 100%;
+}
+
+label {
+    margin: 5px;
+}

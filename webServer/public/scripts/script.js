@@ -2,9 +2,8 @@ var timestamps = [0,1,2,3,4,5];
 var values = [0,1,2,3,4,5];
 
 var currentSensor = null;
-var sta = '';
-var id = '';
-var type = '';
+var timestamp = 0;
+var timer = null;
 
 
 var ctx = document.getElementById("myChart");
@@ -36,7 +35,7 @@ socket.on('callback', function (message) {
 
     if(message.id === 3){
         console.log("handler -> new value");
-        addValue(message.data, myChart);
+        addValues(message.data, myChart);
     }
 
     //___________UPDATE_TREE_____________________
@@ -60,13 +59,25 @@ $('#container').on('changed.jstree', function (e, data) {
         var sta = data.instance.get_node(data.node.parents[1]).text;
         currentSensor = {type: type, id: id, sta: sta};
 
-        var request = "select timestamp,value from val where type="+type+" and id="+id+" and sta='"+sta+"';";
+        var request = "select timestamp,value from val where type="+type+" and id="+id+" and sta='"+sta+"' and timestamp>"+timestamp.toString()+";";
         socket.emit('request', {id: 1, data: request});
     }
 
 })
 
-var timer = null;
+$("#sample_freq").keyup(function(e){
+    if(e.keyCode === 13){
+        socket.emit('command', $("#sample_freq").val());
+    }
+});
+
+$("#timestamp_min").keyup(function(e){
+    if(e.keyCode === 13){
+        timestamp = $("#timestamp_min").val();
+        var request = "select timestamp,value from val where type="+currentSensor.type+" and id="+currentSensor.id+" and sta='"+currentSensor.sta+"' and timestamp>"+timestamp.toString()+";";
+        socket.emit('request', {id: 1, data: request});
+    }
+});
 
 $( "#auto_refresh" ).click(function() {
     if(this.checked){
@@ -79,10 +90,10 @@ $( "#auto_refresh" ).click(function() {
     }
 });
 
-//var myVar = setInterval(refreshValues, 1000);
 function refreshValues(){
+    var lastTs = myChart.data.labels[myChart.data.labels.length - 1];
     if(currentSensor){
-        var request = "select timestamp,value from val where type="+type+" and id="+id+" and sta='"+sta+"';";
+        var request = "select timestamp,value from val where type="+currentSensor.type+" and id="+currentSensor.id+" and sta='"+currentSensor.sta+"' and timestamp>"+lastTs.toString()+";";
         socket.emit('request', {id: 3, data: request});
     }
 }
@@ -109,11 +120,13 @@ function changeValues(message, chart){
     }
 }
 
-function addValue(message, chart){
+function addValues(message, chart){
     if(message){
-        chart.data.labels.push(message.timestamp);
-        chart.data.datasets[0].data.push(message.value);
-
+        for (var i = 0; i<message.length; i++){
+            console.log(message);
+            chart.data.labels.push(message[i].timestamp);
+            chart.data.datasets[0].data.push(message[i].value);
+        }
         chart.update();
     }
 }

@@ -2,31 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Sample Site</title>
+    <title>PRE WebPage</title>
 
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/styles/style.min.css" />
+    <link rel="stylesheet" type="text/css" href="/styles/myStyle.css">
+
     <script src="/socket.io/socket.io.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.5/themes/default/style.min.css" />
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.5/jstree.min.js"></script>
+    <script src="/scripts/Chart.min.js"></script>
+    <script src="/scripts/jquery-3.3.1.min.js"></script>
+    <script src="/scripts/jstree.min.js"></script>
 
-    <style>
-        body { padding-top:50px; }
-    </style>
 </head>
 <body>
     <section>
 
-        <div style="float: right; margin-left: 10px;">
-            <canvas id="myChart" width="1100" height="600"></canvas>
+        <div id="chartContainer">
+            <canvas id="myChart"></canvas>
         </div>
-        <div id="options" style="float: left" >
+
+        <div id="options" >
             <div id="container" ></div>
-            <label><input type="checkbox" id="auto_refresh" style="margin-left: 10px">Auto refresh</label>
+            <ul class="unstyled">
+                <li><span class="label"><input type="checkbox" id="auto_refresh"></span></li>
+                <li><span class="label"><input type="text" id="sample_freq" name="name" placeholder="sample freq"></span></li>
+                <li><span class="label"><input type="text" id="timestamp_min" name="name" placeholder="timestamp min"></span></li>
+            </ul>
         </div>
 
     </section>
-    <script src="./script.js"></script>
+    <script src="/scripts/script.js"></script>
 </body>
 </html>

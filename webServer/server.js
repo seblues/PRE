@@ -1,6 +1,13 @@
 var express = require('express');
 
 var app = express();
+var spawn  = require('child_process').spawn;
+var child = spawn('../zbServer/build/zigbeeServer');
+
+child.stdout.on('data', function(data){
+  console.log(data.toString());
+});
+
 
 //create server listening on port 8080
 var server = require('http').createServer(app);
@@ -21,6 +28,11 @@ io.on('connection', function(socket){
                    var string = JSON.stringify(rows);
                    socket.emit('callback', {id: sqlRequest.id, data: rows});
         });
+    });
+
+    socket.on('command', function(command){
+        console.log(command);
+        child.stdin.write(command.toString() + '\n');
     });
 });
 

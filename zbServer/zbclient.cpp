@@ -6,6 +6,7 @@
 #include <condition_variable>
 #include <iostream>
 #include <time.h>
+#include <math.h>
 
 #include "utils.h"
 #include "zigbee_api.h"
@@ -90,6 +91,8 @@ int rcv(sharedData* pData){
     unsigned int timestamp = 0;
     float value = 0;
 
+    unsigned int x = 0;
+
     while(pData->run){
         buffer = zigbee_read(pData->fd);
 
@@ -124,15 +127,15 @@ int rcv(sharedData* pData){
 
                 sendingBuffer->ptr[1] = 0; //type
                 sendingBuffer->ptr[2] = 0; //id
-                sendingBuffer->ptr[3] = 1; //data
+                sendingBuffer->ptr[3] = cos(x++ + 1); //data
 
                 sendingBuffer->ptr[4] = 1;
                 sendingBuffer->ptr[5] = 0;
-                sendingBuffer->ptr[6] = 2;
+                sendingBuffer->ptr[6] = 2* cos(x++);
 
                 sendingBuffer->ptr[7] = 2;
                 sendingBuffer->ptr[8] = 0;
-                sendingBuffer->ptr[9] = 3;
+                sendingBuffer->ptr[9] = 3* cos(x++ + 2);
 
                 sendData(pData->fd, (char*)macAddr, netAddr, sendingBuffer);
                 break;
