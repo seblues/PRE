@@ -17,20 +17,20 @@
  */
 
 //insert a new module in the addr table
-int insertModule(sqlite3* db, char* macAddr, char* netAddr);
+int insertModule(sqlite3* db, unsigned char* macAddr, unsigned char* netAddr);
 
 //remove the module from the addr table 
-int deleteModule(sqlite3* db, char* macAddr);
+int deleteModule(sqlite3* db, unsigned char* macAddr);
 
 //init the database and create the addr table if not exists
 int initDb(sqlite3* db);
 
 //size of netAddrDest must be 4
-int getNetAddr(sqlite3* db, char* macAddr, char* netAddrDest);
+int getNetAddr(sqlite3* db, unsigned char* macAddr, unsigned char* netAddrDest);
 
 int getAllMacAddr(sqlite3* db, struct List* macAddrList);
 
-int insertValue(sqlite3* db, unsigned int type, char* macAddr, unsigned int id, float value, unsigned int timestamp);
+int insertValue(sqlite3* db, unsigned int type, unsigned char* macAddr, unsigned int id, float value, unsigned int timestamp);
 
 int callbackDb(void *pList, int argc, char **argv, char **azColName);
 

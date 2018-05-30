@@ -13,10 +13,10 @@
 #include "database.h"
 
 //type of message
-#define AT_ANS '\x88'
-#define NODE_ID '\x95'
-#define RECV_MSG '\x90'
-#define TRANS_STAT '\x8B'
+#define AT_ANS 0x88
+#define NODE_ID 0x95
+#define RECV_MSG 0x90
+#define TRANS_STAT 0x8b
 
 #define SIZE_OF_ACCEL 8
 #define SIZE_OF_LUM 8
@@ -81,7 +81,7 @@ int main(){
 
 int rcv(sharedData* pData){
     Buffer* buffer = nullptr;
-    char netAddr[2] = {0x00, 0x00};
+    unsigned char netAddr[2] = {0x00, 0x00};
     unsigned char macAddr[8] = {0x00, 0x13, 0xa2, 0x00, 0x40, 0x89, 0xec, 0x1a};
     unsigned int dataNb = 0;
     unsigned int offset = 0;
@@ -137,7 +137,7 @@ int rcv(sharedData* pData){
                 sendingBuffer->ptr[8] = 0;
                 sendingBuffer->ptr[9] = 3* cos(x++ + 2);
 
-                sendData(pData->fd, (char*)macAddr, netAddr, sendingBuffer);
+                sendData(pData->fd, macAddr, netAddr, sendingBuffer);
                 break;
         }
         freeBuffer(buffer);

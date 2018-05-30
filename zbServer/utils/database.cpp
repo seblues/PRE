@@ -32,13 +32,13 @@ int initDb(sqlite3* db){
 
 //______ADDR_API____________________________________
 
-int insertModule(sqlite3* db, char* macAddr, char* netAddr){
+int insertModule(sqlite3* db, unsigned char* macAddr, unsigned char* netAddr){
 
     //convert from hex to caract
     unsigned char macAddrStr[17];
     unsigned char netAddrStr[5];
-    buffToStr(macAddrStr,(unsigned char*)macAddr,8);
-    buffToStr(netAddrStr,(unsigned char*)netAddr,2);
+    buffToStr(macAddrStr, macAddr,8);
+    buffToStr(netAddrStr, netAddr,2);
 
     //create request
     std::string sqlRequest =    "INSERT INTO addr(sta,dyn) VALUES ('" +
@@ -54,9 +54,9 @@ int insertModule(sqlite3* db, char* macAddr, char* netAddr){
 }
 
 
-int deleteModule(sqlite3* db, char* macAddr){
+int deleteModule(sqlite3* db, unsigned char* macAddr){
 	unsigned char macAddrStr[17];
-	buffToStr(macAddrStr,(unsigned char*)macAddr,8);
+    buffToStr(macAddrStr, macAddr,8);
 
     std::string sqlRequest = "DELETE FROM addr WHERE sta='" + std::string((char*)macAddrStr) + "';";
     std::cout << sqlRequest << std::endl;
@@ -66,11 +66,11 @@ int deleteModule(sqlite3* db, char* macAddr){
 }
 
 //size of netAddr must be 4
-int getNetAddr(sqlite3* db, char* macAddr, char* netAddrDest){
+int getNetAddr(sqlite3* db, unsigned char* macAddr, unsigned char* netAddrDest){
     List netAddrList = {0};
     unsigned char macAddrStr[17];
 
-    buffToStr(macAddrStr, (unsigned char*)macAddr, 8);
+    buffToStr(macAddrStr, macAddr, 8);
 
     std::string sqlRequest = "SELECT dyn FROM addr WHERE sta='" + std::string((char*)macAddrStr) + "';";
     std::cout << sqlRequest << std::endl;
@@ -108,7 +108,7 @@ int callbackDb(void *pValueList, int argc, char **argv, char **azColName){
     struct List* valueList = (struct List*)pValueList;
     unsigned int i = 0;
     for(i = 0; i<argc; i++){
-        strcpy((valueList)->values[valueList->index], argv[i]);
+        strcpy((char*)(valueList)->values[valueList->index], argv[i]);
     }
     ((struct List *)valueList)->index++;
 
@@ -116,7 +116,7 @@ int callbackDb(void *pValueList, int argc, char **argv, char **azColName){
 }
 
 
-int insertValue(sqlite3* db, unsigned int type, char* macAddr, unsigned int id, float value, unsigned int timestamp){
+int insertValue(sqlite3* db, unsigned int type, unsigned char* macAddr, unsigned int id, float value, unsigned int timestamp){
 
     //convert from hex to caract
     unsigned char macAddrStr[17];

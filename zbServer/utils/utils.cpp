@@ -6,7 +6,7 @@
 Buffer* newBuffer(unsigned int bufferSize){
     Buffer* newBuffer = (Buffer*)malloc(sizeof(Buffer));
     newBuffer->size = bufferSize;
-    newBuffer->ptr = (char*)malloc(bufferSize);
+    newBuffer->ptr = (unsigned char*)malloc(bufferSize);
 	return newBuffer;
 }
 
@@ -30,7 +30,7 @@ void buffToStr(unsigned char* strDest,unsigned char* bufferSrc, unsigned int siz
 	}
 }
 
-void strToBuff(char* bufferDest, char* strSrc, unsigned int size){
+void strToBuff(unsigned char* bufferDest, unsigned char* strSrc, unsigned int size){
 	unsigned int i=0;
 	unsigned int val=0;
 	unsigned int j=0;

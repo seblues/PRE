@@ -9,7 +9,7 @@
 #include "zigbee_api.h"
 
 Buffer* zigbee_read(int fd){
-    char header[3] = {0x00, 0x00, 0x00};
+    unsigned char header[3] = {0x00, 0x00, 0x00};
     unsigned int nb = read(fd, header, 3);
     unsigned short bufferSize = (unsigned short)((header[1]<<8) + header[2]);
     Buffer* buffer = newBuffer(bufferSize + 1);// +1 ->checksum
@@ -20,7 +20,7 @@ Buffer* zigbee_read(int fd){
 	return buffer;
 }
 
-int sendData(int fd, const char* macAddr, const char* netAddr, const Buffer* dataBuffer){
+int sendData(int fd, const unsigned char* macAddr, const unsigned char* netAddr, const Buffer* dataBuffer){
     unsigned int i = 0;
     Buffer* buffer = newBuffer(18 + dataBuffer->size);
     unsigned int length = 14 + dataBuffer->size; //14=17-3 -> header
@@ -40,11 +40,12 @@ int sendData(int fd, const char* macAddr, const char* netAddr, const Buffer* dat
     for(i=0; i<dataBuffer->size; i++){
         buffer->ptr[17+i] = dataBuffer->ptr[i];
 	}
-	//checksum
-    buffer->ptr[17 + dataBuffer->size] = 0xFF;
+    //checksum
+    unsigned char checksum = 0xFF;
     for(i=3; i< 17 + dataBuffer->size; i++){
-        buffer->ptr[17 + dataBuffer->size] -= buffer->ptr[i];
+        checksum -= (unsigned char)buffer->ptr[i];
 	}
+    buffer->ptr[17 + dataBuffer->size] = checksum;
     //printBuffer(buffer);
 	write(fd, buffer->ptr, buffer->size);
 	freeBuffer(buffer);
@@ -73,7 +74,7 @@ int sendCmd(int fd, char* cmd, Buffer* data){
 	//checksum
     buffer->ptr[7 + dataSize] = 0xFF;
     for(i=3; i< 7 + dataSize; i++){
-        buffer->ptr[7+dataSize] -= buffer->ptr[i];
+        buffer->ptr[7+dataSize] -= (unsigned char)buffer->ptr[i];
 	}
 	write(fd, buffer->ptr, buffer->size);
 	freeBuffer(buffer);
@@ -118,12 +119,12 @@ int zigbee_close(int fd){
 }
 
 int verifyData(Buffer* buff){
-	unsigned int i=0;
-	char checksum=0;
+    unsigned int i = 0;
+    unsigned char checksum = 0;
 	for(i=0; i<(buff->size)-1; i++){ //sum without checksum
-		checksum+=buff->ptr[i];
+        checksum += buff->ptr[i];
 	}
-	checksum=0xFF-checksum;
-	if(checksum==buff->ptr[(buff->size)-1]){return 0;}
+    checksum = 0xFF - checksum;
+    if(checksum == buff->ptr[(buff->size)-1]){return 0;}
 	return -1;
 }

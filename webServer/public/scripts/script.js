@@ -20,6 +20,9 @@ var myChart = new Chart(ctx, {
 });
 
 var socket = io.connect('http://localhost:8080');
+
+
+//emit request to get the tree view
 socket.emit('request', {id: 0, data: "select distinct sta,type,id from val"});
 
 socket.on('callback', function (message) {
@@ -49,45 +52,6 @@ socket.on('callback', function (message) {
 
     }
 
-});
-
-
-$('#container').on('changed.jstree', function (e, data) {
-    if(data.node.parents.length === 3){
-        var type = data.instance.get_node(data.selected).text;
-        var id = data.instance.get_node(data.node.parents[0]).text;
-        var sta = data.instance.get_node(data.node.parents[1]).text;
-        currentSensor = {type: type, id: id, sta: sta};
-
-        var request = "select timestamp,value from val where type="+type+" and id="+id+" and sta='"+sta+"' and timestamp>"+timestamp.toString()+";";
-        socket.emit('request', {id: 1, data: request});
-    }
-
-})
-
-$("#sample_freq").keyup(function(e){
-    if(e.keyCode === 13){
-        socket.emit('command', $("#sample_freq").val());
-    }
-});
-
-$("#timestamp_min").keyup(function(e){
-    if(e.keyCode === 13){
-        timestamp = $("#timestamp_min").val();
-        var request = "select timestamp,value from val where type="+currentSensor.type+" and id="+currentSensor.id+" and sta='"+currentSensor.sta+"' and timestamp>"+timestamp.toString()+";";
-        socket.emit('request', {id: 1, data: request});
-    }
-});
-
-$( "#auto_refresh" ).click(function() {
-    if(this.checked){
-        timer = setInterval(refreshValues, 1000);
-        console.log("start auto refresh");
-    }
-    else{
-        console.log("stop auto refresh");
-        clearInterval(timer);
-    }
 });
 
 function refreshValues(){
@@ -183,3 +147,43 @@ function updateTree(message, jsTree){
       }
     });
 }
+
+//___________________JQUERY_PART___________________________________
+
+$('#container').on('changed.jstree', function (e, data) {
+    if(data.node.parents.length === 3){
+        var type = data.instance.get_node(data.selected).text;
+        var id = data.instance.get_node(data.node.parents[0]).text;
+        var sta = data.instance.get_node(data.node.parents[1]).text;
+        currentSensor = {type: type, id: id, sta: sta};
+
+        var request = "select timestamp,value from val where type="+type+" and id="+id+" and sta='"+sta+"' and timestamp>"+timestamp.toString()+";";
+        socket.emit('request', {id: 1, data: request});
+    }
+
+})
+
+$("#sample_freq").keyup(function(e){
+    if(e.keyCode === 13){
+        socket.emit('command', $("#sample_freq").val());
+    }
+});
+
+$("#timestamp_min").keyup(function(e){
+    if(e.keyCode === 13){
+        timestamp = $("#timestamp_min").val();
+        var request = "select timestamp,value from val where type="+currentSensor.type+" and id="+currentSensor.id+" and sta='"+currentSensor.sta+"' and timestamp>"+timestamp.toString()+";";
+        socket.emit('request', {id: 1, data: request});
+    }
+});
+
+$( "#auto_refresh" ).click(function() {
+    if(this.checked){
+        timer = setInterval(refreshValues, 1000);
+        console.log("start auto refresh");
+    }
+    else{
+        console.log("stop auto refresh");
+        clearInterval(timer);
+    }
+});
