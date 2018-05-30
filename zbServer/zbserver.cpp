@@ -137,46 +137,48 @@ int rcv(sharedData* pData){
                 //PERSONAL PROTOCOL PART
                 offset = 0;
                 dataNb = buffer->ptr[12];
+                std::cout << dataNb << std::endl;
                 for(unsigned int i=0; i<dataNb; i++){
                     type = buffer->ptr[13 + offset];
                     id = buffer->ptr[14 + offset];
                     switch(type){
                         case ACCEL_X:
                             //DATA TYPE 0 TO COMPLETE
-                            val_accel = buffer->ptr[15 + offset] << 8 + buffer->ptr[16 + offset];
+                            val_accel = buffer->ptr[15 + offset] << 8 | buffer->ptr[16 + offset];
                             value = (float)val_accel;
-                            offset += SIZE_OF_ACCEL;
+                            offset += SIZE_OF_ACCEL + 2;
                             break;
                         case ACCEL_Y:
                             //DATA TYPE 1 TO COMPLETE
-                            val_accel = buffer->ptr[15 + offset] << 8 + buffer->ptr[16 + offset];
+                            val_accel = buffer->ptr[15 + offset] << 8 | buffer->ptr[16 + offset];
                             value = (float)val_accel;
-                            offset += SIZE_OF_ACCEL;
+                            offset += SIZE_OF_ACCEL + 2;
                             break;
                         case ACCEL_Z:
                             //DATA TYPE 2 TO COMPLETE
-                            val_accel = buffer->ptr[15 + offset] << 8 + buffer->ptr[16 + offset];
+                            val_accel = buffer->ptr[15 + offset] << 8 | buffer->ptr[16 + offset];
                             value = (float)val_accel;
-                            offset += SIZE_OF_ACCEL;
+                            offset += SIZE_OF_ACCEL + 2;
                             break;
                         case LUM:
                             //DATA TYPE 3 TO COMPLETE
                             val_lum = (buffer->ptr[15 + offset] << 24 | buffer->ptr[16 + offset] << 16 | buffer->ptr[17 + offset] << 8 | buffer->ptr[18 + offset]);
                             value = (float)val_lum;
-                            offset += SIZE_OF_LUM;
+                            offset += SIZE_OF_LUM + 2;
                             break;
                         case TEMP:
                             //DATA TYPE 3 TO COMPLETE
-                            val_temp = buffer->ptr[15 + offset] << 8 + buffer->ptr[15 + offset];
+                            val_temp = buffer->ptr[15 + offset] << 8 | buffer->ptr[16 + offset];
                             value = (float)val_temp;
-                            offset += SIZE_OF_TEMP;
+                            offset += SIZE_OF_TEMP + 2;
                             break;
                         case DIGIT:
                             //DATA TYPE 3 TO COMPLETE
                             value = buffer->ptr[15 + offset];
-                            offset += SIZE_OF_DIGIT;
+                            offset += SIZE_OF_DIGIT + 2;
                             break;
                     }
+                    std::cout << val_accel << std::endl;
                     clock_gettime(CLOCK_REALTIME, &ts);
                     insertValue(pData->db, type, pData->currentMacAddr, id, value, ts.tv_sec);
                 }
